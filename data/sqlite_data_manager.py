@@ -1,13 +1,20 @@
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy.orm import DeclarativeBase
 from data.data_manager import DataManagerInterface
 
-db = SQLAlchemy()
+
+class Base(DeclarativeBase):
+    pass
+
+
+db = SQLAlchemy(model_class=Base)
 
 
 class SQLiteDataManager(DataManagerInterface):
 
     def __init__(self, db_file_name):
-        self.db = SQLAlchemy(db_file_name)
+        self.db = SQLAlchemy(model_class=Base)
+        # self.db = SQLAlchemy(db_file_name)
 
     def get_all_users(self):
         return self.db.session.query(Users).all
