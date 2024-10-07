@@ -1,4 +1,7 @@
 abc
-python-dotenv
 flask
 flask-sqlalchemy
+sqlalchemy
+os
+python-dotenv
+requests
