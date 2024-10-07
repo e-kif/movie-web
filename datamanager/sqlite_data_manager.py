@@ -1,4 +1,6 @@
+import dotenv
 from flask_sqlalchemy import SQLAlchemy
+import os
 from sqlalchemy.orm import DeclarativeBase
 from datamanager.data_manager import DataManagerInterface
 
@@ -7,20 +9,19 @@ class Base(DeclarativeBase):
     pass
 
 
-db = SQLAlchemy(model_class=Base)
-
-
 class SQLiteDataManager(DataManagerInterface):
 
-    def __init__(self, db_file_name):
+    omdb_key = dotenv.get_key(os.path.join(os.getcwd(), '.env'), 'OMDB_API')
+
+    def __init__(self):
         self.db = SQLAlchemy(model_class=Base)
-        # self.db = SQLAlchemy(db_file_name)
+        # self.db = SQLAlchemy('storage/movies.sqlite')
 
     def get_all_users(self):
-        return self.db.session.query(Users).all
+        return self.db.session.query(Users).all()
 
     def get_user_movies(self, user_id):
-        return self.db.session.query(Movies).join(UserMovies).filter(UserMovies.user_id == user_id)
+        return self.db.session.query(Movies).join(UserMovies).filter(UserMovies.user_id == user_id).all()
 
     def add_user(self, user):
         self.db.session.add(Users(name=user))
@@ -53,6 +54,9 @@ class SQLiteDataManager(DataManagerInterface):
         the_movie.delete()
         self.db.session.commit()
         return f'The movie "{title}" was deleted successfully.'
+
+
+db = SQLiteDataManager().db
 
 
 class Users(db.Model):

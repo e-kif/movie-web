@@ -1,3 +1,4 @@
 abc
+python-dotenv
 flask
 flask-sqlalchemy
