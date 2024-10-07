@@ -1,6 +1,6 @@
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import DeclarativeBase
-from data.data_manager import DataManagerInterface
+from datamanager.data_manager import DataManagerInterface
 
 
 class Base(DeclarativeBase):

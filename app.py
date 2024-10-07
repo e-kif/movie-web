@@ -1,9 +1,9 @@
-from flask import Flask, render_template, redirect, jsonify, request
+from flask import Flask, render_template, redirect, request
 import os
-from data.sqlite_data_manager import SQLiteDataManager, db, Movies, Users, UserMovies
+from datamanager.sqlite_data_manager import SQLiteDataManager, db
 
 app = Flask(__name__)
-database_filename = os.path.join(os.getcwd(), 'data', 'movies.sqlite')
+database_filename = os.path.join(os.getcwd(), 'storage', 'movies.sqlite')
 app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{database_filename}'
 db.init_app(app)
 
@@ -12,10 +12,9 @@ db.init_app(app)
 
 data = SQLiteDataManager(database_filename)
 
-
 @app.route('/', methods=['GET'])
 def home():
-    return render_template('home.html', users=data.get_all_users())
+    return 'Welcome to the MovieWeb App!'
 
 
 @app.route('/add-user', methods=['GET', 'POST'])
