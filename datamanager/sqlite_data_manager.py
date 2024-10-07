@@ -20,6 +20,9 @@ class SQLiteDataManager(DataManagerInterface):
     def get_all_users(self):
         return self.db.session.query(Users).all()
 
+    def get_user(self, user_id):
+        return self.db.session.query(Users).filter(Users.id == user_id).one()
+
     def get_user_movies(self, user_id):
         return self.db.session.query(Movies).join(UserMovies).filter(UserMovies.user_id == user_id).all()
 
