@@ -1,6 +1,5 @@
 from flask import Flask, render_template, redirect, request
 import os
-import requests
 from datamanager.sqlite_data_manager import SQLiteDataManager
 
 app = Flask(__name__)
@@ -50,8 +49,8 @@ def add_movie(user_id):
     if request.method == 'POST':
         title = request.form.get('title')
         year = request.form.get('year')
-        data.add_movie(title, 'director', year, 'rating')  # TODO api request
-        return redirect(f'user/{user_id}?message=Movie {title} was added.')
+        data.add_movie(user_id, title, year)
+        return redirect(f'/user/{user_id}?message=Movie {title} was added.')
 
 
 @app.route('/users/<int:user_id>/update_movie/<int:movie_id>', methods=['GET'])

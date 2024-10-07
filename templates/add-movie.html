@@ -7,7 +7,7 @@
 </head>
 <body>
 	<h1>{{user.name}}, add a new movie!</h1>
-	<form action="/users/{{user.id}}/add-movie">
+	<form action="/users/{{user.id}}/add-movie" method="post">
 		<input type="text" placeholder="Movie title" name="title" required>
 		<input type="number" placeholder="Release year" name="year">
 		<input type="submit" value="Add a movie">

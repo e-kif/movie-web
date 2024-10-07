@@ -1,6 +1,7 @@
 import dotenv
 from flask_sqlalchemy import SQLAlchemy
 import os
+import requests
 from sqlalchemy.orm import DeclarativeBase
 from datamanager.data_manager import DataManagerInterface
 
@@ -12,6 +13,7 @@ class Base(DeclarativeBase):
 class SQLiteDataManager(DataManagerInterface):
 
     omdb_key = dotenv.get_key(os.path.join(os.getcwd(), '.env'), 'OMDB_API')
+    omdb_url = 'https://www.omdbapi.com/?apikey=' + omdb_key
 
     def __init__(self):
         self.db = SQLAlchemy(model_class=Base)
@@ -26,19 +28,32 @@ class SQLiteDataManager(DataManagerInterface):
     def get_user_movies(self, user_id):
         return self.db.session.query(Movies).join(UserMovies).filter(UserMovies.user_id == user_id).all()
 
+    def get_all_movies(self):
+        return self.db.session.query(Movies).all()
+
     def add_user(self, user):
         self.db.session.add(Users(name=user))
         self.db.session.commit()
         return f'User {user} was added successfully.'
 
-    def add_movie(self, title, director, year, rating):
+    def add_movie(self, user_id, title, year=''):
+        movie_info = requests.get(f'{self.omdb_url}&t={title}&y={year}').json()
+        if not year:
+            year = movie_info['Year']
         movie = Movies(
-            title=title,
-            director=director,
+            title=movie_info['Title'],
+            director=movie_info['Director'],
             year=year,
-            rating=rating
+            rating=movie_info['imdbRating']
         )
         self.db.session.add(movie)
+        self.db.session.flush()
+        user_movie = UserMovies(
+            user_id=user_id,
+            movie_id=movie.id
+        )
+        self.db.session.add(movie)
+        self.db.session.add(user_movie)
         self.db.session.commit()
         return f'Movie "{title}" was added successfully.'
 
