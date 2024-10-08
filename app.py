@@ -73,5 +73,11 @@ def delete_movie(user_id, movie_id):
     return redirect(f'/user/{user_id}?message={message}')
 
 
+@app.errorhandler(404)
+def page_not_found():
+    # TODO add 404.html template
+    return render_template('404.html'), 404
+
+
 if __name__ == '__main__':
     app.run(port=5000, host='0.0.0.0', debug=True)

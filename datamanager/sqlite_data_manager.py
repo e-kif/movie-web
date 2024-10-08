@@ -77,6 +77,8 @@ class SQLiteDataManager(DataManagerInterface):
             the_movie = self.db.session.query(Movies).filter(Movies.id == movie_id)
             title = the_movie.one().title
             the_movie.delete()
+        else:
+            title = self.db.session.query(Movies.title).filter(Movies.id == movie_id).one()
         self.db.session.commit()
         return f'The movie "{title}" was deleted successfully.'
 
