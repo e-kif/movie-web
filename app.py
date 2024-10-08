@@ -53,14 +53,24 @@ def add_movie(user_id):
         return redirect(f'/user/{user_id}?message={message}')
 
 
-@app.route('/users/<int:user_id>/update_movie/<int:movie_id>', methods=['GET'])
+@app.route('/users/<int:user_id>/update_movie/<int:movie_id>', methods=['GET', 'POST'])
 def update_movie(user_id, movie_id):
-    return f'updates a movie with id {movie_id} for user # {user_id}'
+    if request.method == 'GET':
+        movie = data.get_movie(movie_id)
+        return render_template('update-movie.html', movie=movie, user_id=user_id)
+    if request.method == 'POST':
+        title = request.form.get('title')
+        director = request.form.get('director')
+        year = request.form.get('year')
+        rating = request.form.get('rating')
+        message = data.update_movie(movie_id, title, director, year, rating)
+        return redirect(f'/user/{user_id}?message={message}')
 
 
 @app.route('/users/<int:user_id>/delete_movie/<int:movie_id>', methods=['GET'])
 def delete_movie(user_id, movie_id):
-    return f"deletes movie {movie_id} from user's {user_id} favorites"
+    message = data.delete_movie(user_id, movie_id)
+    return redirect(f'/user/{user_id}?message={message}')
 
 
 if __name__ == '__main__':

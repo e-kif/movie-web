@@ -11,7 +11,6 @@ class Base(DeclarativeBase):
 
 
 class SQLiteDataManager(DataManagerInterface):
-
     omdb_key = dotenv.get_key(os.path.join(os.getcwd(), '.env'), 'OMDB_API')
     omdb_url = 'https://www.omdbapi.com/?apikey=' + omdb_key
 
@@ -57,6 +56,9 @@ class SQLiteDataManager(DataManagerInterface):
         self.db.session.commit()
         return f'Movie "{movie_info['Title']}" was added successfully.'
 
+    def get_movie(self, movie_id):
+        return self.db.session.query(Movies).filter(Movies.id == movie_id).one()
+
     def update_movie(self, movie_id, title, director, year, rating):
         the_movie = self.db.session.query(Movies).filter(Movies.id == movie_id).one()
         the_movie.title = title
@@ -66,10 +68,15 @@ class SQLiteDataManager(DataManagerInterface):
         self.db.session.commit()
         return f'The movie "{title}" was update successfully.'
 
-    def delete_movie(self, movie_id):
-        the_movie = self.db.session.query(Movies).filter(Movies.id == movie_id).one()
-        title = the_movie.title
-        the_movie.delete()
+    def delete_movie(self, user_id, movie_id):
+        self.db.session.query(UserMovies) \
+            .filter(UserMovies.user_id == user_id) \
+            .filter(UserMovies.movie_id == movie_id) \
+            .delete()
+        if not self.db.session.query(UserMovies).filter(UserMovies.movie_id == movie_id).count():
+            the_movie = self.db.session.query(Movies).filter(Movies.id == movie_id)
+            title = the_movie.one().title
+            the_movie.delete()
         self.db.session.commit()
         return f'The movie "{title}" was deleted successfully.'
 
