@@ -10,6 +10,8 @@
 	<ul>
 		{% for movie in movies %}
 			<li>{{movie.title}}</li>
+			<button><a href="/users/{{user.id}}/delete_movie/{{movie.id}}">Delete movie</a></button>
+			<button><a href="/users/{{user.id}}/update_movie/{{movie.id}}">Update movie</a></button>
 		{% endfor %}
 	</ul>
 	<button><a href="/users/{{user.id}}/add-movie">Add new movie</a></button>

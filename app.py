@@ -6,11 +6,11 @@ app = Flask(__name__)
 database_filename = os.path.join(os.getcwd(), 'storage', 'movies.sqlite')
 app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{database_filename}'
 
-# with app.app_context():
-#     db.create_all()
 
 data = SQLiteDataManager()
 data.db.init_app(app)
+# with app.app_context():
+#     data.db.create_all()
 
 
 @app.route('/', methods=['GET'])
@@ -49,8 +49,8 @@ def add_movie(user_id):
     if request.method == 'POST':
         title = request.form.get('title')
         year = request.form.get('year')
-        data.add_movie(user_id, title, year)
-        return redirect(f'/user/{user_id}?message=Movie {title} was added.')
+        message = data.add_movie(user_id, title, year)
+        return redirect(f'/user/{user_id}?message={message}')
 
 
 @app.route('/users/<int:user_id>/update_movie/<int:movie_id>', methods=['GET'])
@@ -58,7 +58,7 @@ def update_movie(user_id, movie_id):
     return f'updates a movie with id {movie_id} for user # {user_id}'
 
 
-@app.route('/users/<int:user>/delete_movie/<int:movie_id>', methods=['GET'])
+@app.route('/users/<int:user_id>/delete_movie/<int:movie_id>', methods=['GET'])
 def delete_movie(user_id, movie_id):
     return f"deletes movie {movie_id} from user's {user_id} favorites"
 

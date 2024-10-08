@@ -55,7 +55,7 @@ class SQLiteDataManager(DataManagerInterface):
         self.db.session.add(movie)
         self.db.session.add(user_movie)
         self.db.session.commit()
-        return f'Movie "{title}" was added successfully.'
+        return f'Movie "{movie_info['Title']}" was added successfully.'
 
     def update_movie(self, movie_id, title, director, year, rating):
         the_movie = self.db.session.query(Movies).filter(Movies.id == movie_id).one()
