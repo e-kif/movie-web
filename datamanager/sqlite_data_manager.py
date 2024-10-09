@@ -47,11 +47,13 @@ class SQLiteDataManager(DataManagerInterface):
         return f'User {user} was added successfully.'
 
     def add_movie(self, user_id, title, year=''):
-        movie_info = requests.get(f'{self.omdb_url}&t={title}&y={year}').json()
+        try:
+            movie_info = requests.get(f'{self.omdb_url}&t={title}&y={year}').json()
+        except requests.exceptions.ConnectionError:
+            return False, f'Error: movie "{title}" was not added. Check your internet connection and try again.'
         print(movie_info)
         if movie_info['Response'] == 'False':
-            message = f'Error: movie "{title}" was not added. {movie_info["Error"]}'
-            return False, message
+            return False, f'Error: movie "{title}" was not added. {movie_info["Error"]}'
         if not year:
             year = movie_info['Year']
         movie = Movies(
