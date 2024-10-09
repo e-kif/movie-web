@@ -28,7 +28,7 @@ def list_users():
 def user(user_id):
     username = data.get_user(user_id)
     movies = data.get_user_movies(user_id)
-    message = request.args.get('message')
+    message = request.args.get('message', '')
     return render_template('user-movies.html', user=username, movies=movies, message=message)
 
 
@@ -75,8 +75,7 @@ def delete_movie(user_id, movie_id):
 
 
 @app.errorhandler(404)
-def page_not_found():
-    # TODO add 404.html template
+def page_not_found(e):
     return render_template('404.html'), 404
 
 
