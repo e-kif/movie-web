@@ -2,11 +2,11 @@ import dotenv
 from flask_sqlalchemy import SQLAlchemy
 import os
 import requests
-from sqlalchemy.orm import DeclarativeBase
+import sqlalchemy
 from datamanager.data_manager import DataManagerInterface
 
 
-class Base(DeclarativeBase):
+class Base(sqlalchemy.orm.DeclarativeBase):
     pass
 
 
@@ -63,34 +63,37 @@ class SQLiteDataManager(DataManagerInterface):
             return False, f'Error: movie "{title}" was not added. {movie_info["Error"]}'
         if not year:
             year = movie_info['Year']
-        movie_exist = self.db.session.query(Movies) \
-            .filter(Movies.title == movie_info['Title'] and Movies.year == movie_info['Year']).all()
-        if movie_exist:
-            if UserMovies.query.filter(UserMovies.user_id == user_id and UserMovies.movie_id == movie_exist[0].id):
-                return False, f'Movie "{movie_exist[0].title}" is already in your movies.'
+        try:
+            movie_exist = self.db.session.query(Movies) \
+                .filter(Movies.title == movie_info['Title'] and Movies.year == movie_info['Year']).one()
+        except sqlalchemy.exc.NoResultFound:
+            movie = Movies(
+                title=movie_info['Title'],
+                director=movie_info['Director'],
+                year=year,
+                rating=None if movie_info['imdbRating'] == 'N/A' else movie_info['imdbRating']
+            )
+            self.db.session.add(movie)
+            self.db.session.flush()
             user_movie = UserMovies(
                 user_id=user_id,
-                movie_id=movie_exist[0].id
+                movie_id=movie.id
+            )
+            self.db.session.add(movie)
+            self.db.session.add(user_movie)
+            self.db.session.commit()
+            return True, f'Movie "{movie_info["Title"]}" was added successfully.'
+        if movie_exist:
+            if (self.db.session.query(UserMovies).filter(UserMovies.user_id == user_id)
+                    .filter(UserMovies.movie_id == movie_exist.id).all()):
+                return False, f'Movie "{movie_exist.title}" is already in your movies.'
+            user_movie = UserMovies(
+                user_id=user_id,
+                movie_id=movie_exist.id
             )
             self.db.session.add(user_movie)
             self.db.session.commit()
-            return True, f'Movie "{movie_exist[0].title}" was added successfully.'
-        movie = Movies(
-            title=movie_info['Title'],
-            director=movie_info['Director'],
-            year=year,
-            rating=None if movie_info['imdbRating'] == 'N/A' else movie_info['imdbRating']
-        )
-        self.db.session.add(movie)
-        self.db.session.flush()
-        user_movie = UserMovies(
-            user_id=user_id,
-            movie_id=movie.id
-        )
-        self.db.session.add(movie)
-        self.db.session.add(user_movie)
-        self.db.session.commit()
-        return True, f'Movie "{movie_info["Title"]}" was added successfully.'
+            return True, f'Movie "{movie_exist.title}" was added successfully.'
 
     def get_movie(self, movie_id):
         return self.db.session.query(Movies).filter(Movies.id == movie_id).one()
