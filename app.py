@@ -28,7 +28,8 @@ def list_users():
 def user(user_id):
     username = data.get_user(user_id)
     movies = data.get_user_movies(user_id)
-    return render_template('user-movies.html', user=username, movies=movies)
+    message = request.args.get('message')
+    return render_template('user-movies.html', user=username, movies=movies, message=message)
 
 
 @app.route('/add-user', methods=['GET', 'POST'])

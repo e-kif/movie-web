@@ -7,7 +7,14 @@
 </head>
 <body>
 	<h1>{{user.name}}'s movies</h1>
-	<ul>
+
+	{% if message is defined and message|length %}
+
+	<p>{{message}}</p>
+
+	{% endif %}
+
+	<ul class="user-movies">
 		{% for movie in movies %}
 			<li>{{movie.title}}</li>
 			<button><a href="/users/{{user.id}}/delete_movie/{{movie.id}}">Delete movie</a></button>
