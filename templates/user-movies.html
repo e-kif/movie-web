@@ -4,6 +4,7 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>{{user.name}}'s Movies</title>
+	<link rel="stylesheet" href="static/style.css">
 </head>
 <body>
 	<h1>{{user.name}}'s movies</h1>
@@ -17,8 +18,8 @@
 	<ul class="user-movies">
 		{% for movie in movies %}
 			<li>{{movie.title}}</li>
-			<button><a href="/users/{{user.id}}/delete_movie/{{movie.id}}">Delete movie</a></button>
-			<button><a href="/users/{{user.id}}/update_movie/{{movie.id}}">Update movie</a></button>
+			<a href="/users/{{user.id}}/delete_movie/{{movie.id}}"><button>Delete movie</button></a>
+			<a href="/users/{{user.id}}/update_movie/{{movie.id}}"><button>Update movie</button></a>
 		{% endfor %}
 	</ul>
 	<a href="/users/{{user.id}}/add-movie"><button>Add new movie</button></a>
