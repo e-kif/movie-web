@@ -4,10 +4,14 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Add new movie</title>
-	<link rel="stylesheet" href="static/style.css">
+	<link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
 	<h1>{{user.name}}, add a new movie!</h1>
+	<nav>
+		<a href="/user/{{user.id}}"><button>Back to movies</button></a>
+	</nav>
+	
 	{% if message is defined and message|length %}
 	<p>{{message}}</p>
 	{% endif %}
@@ -17,7 +21,6 @@
 		<input type="submit" value="Add a movie">
 	</form>
 
-	<a href="/user/{{user.id}}"><button>Back to movies</button></a>
 
 </body>
 </html>
