@@ -30,7 +30,7 @@ class SQLiteDataManager(DataManagerInterface):
         user.delete()
         self.db.session.query(UserMovies).filter(UserMovies.user_id == user_id).delete()
         delete_movies_ids = [id[0] for id in self.db.session.query(Movies.id).join(UserMovies, isouter=True) \
-                             .filter(UserMovies.user_id.is_(None)).all()]
+            .filter(UserMovies.user_id.is_(None)).all()]
         self.db.session.query(Movies).filter(Movies.id.in_(delete_movies_ids)).delete()
         self.db.session.commit()
         return username
@@ -51,16 +51,27 @@ class SQLiteDataManager(DataManagerInterface):
             movie_info = requests.get(f'{self.omdb_url}&t={title}&y={year}').json()
         except requests.exceptions.ConnectionError:
             return False, f'Error: movie "{title}" was not added. Check your internet connection and try again.'
-        print(movie_info)
         if movie_info['Response'] == 'False':
             return False, f'Error: movie "{title}" was not added. {movie_info["Error"]}'
         if not year:
             year = movie_info['Year']
+        movie_exist = self.db.session.query(Movies) \
+            .filter(Movies.title == movie_info['Title'] and Movies.year == movie_info['Year']).all()
+        if movie_exist:
+            if UserMovies.query.filter(UserMovies.user_id == user_id and UserMovies.movie_id == movie_exist[0].id):
+                return False, f'Movie "{movie_exist[0].title}" is already in your movies.'
+            user_movie = UserMovies(
+                user_id=user_id,
+                movie_id=movie_exist[0].id
+            )
+            self.db.session.add(user_movie)
+            self.db.session.commit()
+            return True, f'Movie "{movie_exist[0].title}" was added successfully.'
         movie = Movies(
             title=movie_info['Title'],
             director=movie_info['Director'],
             year=year,
-            rating=movie_info['imdbRating']
+            rating=None if movie_info['imdbRating'] == 'N/A' else movie_info['imdbRating']
         )
         self.db.session.add(movie)
         self.db.session.flush()
@@ -116,7 +127,7 @@ class Movies(db.Model):
     title: db.Mapped[str] = db.mapped_column()
     director: db.Mapped[str] = db.mapped_column()
     year: db.Mapped[int] = db.mapped_column()
-    rating: db.Mapped[float] = db.mapped_column()
+    rating: db.Mapped[float] = db.mapped_column(nullable=True)
 
     def __repr__(self):
         return f'Movies(id={self.id}, title={self.title}, year={self.year})'

@@ -45,7 +45,7 @@ def add_user():
     if request.method == 'POST':
         name = request.form.get('user')
         data.add_user(name)
-        return redirect(f'/users?message=User <em>{name}</em> was added successfully.', 302)
+        return redirect(f'/users?message=User {name} was added successfully.', 302)
 
 
 @app.route('/users/<int:user_id>/add-movie', methods=['GET', 'POST'])
