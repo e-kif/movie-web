@@ -1,5 +1,6 @@
 from flask import Flask, render_template, redirect, request
 import os
+import sqlalchemy
 from datamanager.sqlite_data_manager import SQLiteDataManager
 
 app = Flask(__name__)
@@ -26,7 +27,10 @@ def list_users():
 
 @app.route('/user/<int:user_id>', methods=['GET'])
 def user(user_id):
-    username = data.get_user(user_id)
+    try:
+        username = data.get_user(user_id)
+    except sqlalchemy.exc.NoResultFound:
+        return redirect('/404')
     movies = data.get_user_movies(user_id)
     message = request.args.get('message', '')
     return render_template('user-movies.html', user=username, movies=movies, message=message)
@@ -60,7 +64,10 @@ def add_movie(user_id):
 @app.route('/users/<int:user_id>/update_movie/<int:movie_id>', methods=['GET', 'POST'])
 def update_movie(user_id, movie_id):
     if request.method == 'GET':
-        movie = data.get_movie(movie_id)
+        try:
+            movie = data.get_movie(movie_id)
+        except sqlalchemy.exc.NoResultFound:
+            return redirect('/404')
         return render_template('update-movie.html', movie=movie, user_id=user_id)
     if request.method == 'POST':
         title = request.form.get('title')
