@@ -46,11 +46,14 @@ def add_user():
 def add_movie(user_id):
     username = data.get_user(user_id)
     if request.method == 'GET':
-        return render_template('add-movie.html', user=username)
+        message = request.args.get('message', '')
+        return render_template('add-movie.html', user=username, message=message)
     if request.method == 'POST':
         title = request.form.get('title')
         year = request.form.get('year')
-        message = data.add_movie(user_id, title, year)
+        success, message = data.add_movie(user_id, title, year)
+        if not success:
+            return redirect(f'/users/{user_id}/add-movie?message={message}')
         return redirect(f'/user/{user_id}?message={message}')
 
 

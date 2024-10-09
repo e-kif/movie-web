@@ -37,6 +37,10 @@ class SQLiteDataManager(DataManagerInterface):
 
     def add_movie(self, user_id, title, year=''):
         movie_info = requests.get(f'{self.omdb_url}&t={title}&y={year}').json()
+        print(movie_info)
+        if movie_info['Response'] == 'False':
+            message = f'Error: movie "{title}" was not added. {movie_info["Error"]}'
+            return False, message
         if not year:
             year = movie_info['Year']
         movie = Movies(
@@ -54,7 +58,7 @@ class SQLiteDataManager(DataManagerInterface):
         self.db.session.add(movie)
         self.db.session.add(user_movie)
         self.db.session.commit()
-        return f'Movie "{movie_info["Title"]}" was added successfully.'
+        return True, f'Movie "{movie_info["Title"]}" was added successfully.'
 
     def get_movie(self, movie_id):
         return self.db.session.query(Movies).filter(Movies.id == movie_id).one()
