@@ -55,7 +55,9 @@ def add_movie(user_id):
         message = request.args.get('message', '')
         return render_template('add-movie.html', user=username, message=message)
     if request.method == 'POST':
-        title = request.form.get('title')
+        title = request.form.get('title').strip()
+        if not title:
+            return redirect(f'/users/{user_id}/add-movie?message=Movie title should not be empty')
         year = request.form.get('year')
         success, message = data.add_movie(user_id, title, year)
         if not success:
