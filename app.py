@@ -7,9 +7,10 @@ app = Flask(__name__)
 database_filename = os.path.join(os.getcwd(), 'storage', 'movies.sqlite')
 app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{database_filename}'
 
-
 data = SQLiteDataManager()
 data.db.init_app(app)
+
+
 # with app.app_context():
 #     data.db.create_all()
 
@@ -22,7 +23,8 @@ def home():
 @app.route('/users', methods=['GET'])
 def list_users():
     users = data.get_all_users()
-    return render_template('users.html', users=users)
+    message = request.args.get('message', '')
+    return render_template('users.html', users=users, message=message)
 
 
 @app.route('/user/<int:user_id>', methods=['GET'])
@@ -43,7 +45,7 @@ def add_user():
     if request.method == 'POST':
         name = request.form.get('user')
         data.add_user(name)
-        return redirect('/users?message=User was added successfully.', 302)
+        return redirect(f'/users?message=User <em>{name}</em> was added successfully.', 302)
 
 
 @app.route('/users/<int:user_id>/add-movie', methods=['GET', 'POST'])
@@ -76,6 +78,13 @@ def update_movie(user_id, movie_id):
         rating = request.form.get('rating')
         message = data.update_movie(movie_id, title, director, year, rating)
         return redirect(f'/user/{user_id}?message={message}')
+
+
+@app.route('/users/<int:user_id>/delete-user')
+def delete_user(user_id):
+    username = data.delete_user(user_id)
+    message = f'User {username} was deleted successfully.'
+    return redirect(f'/users?message={message}')
 
 
 @app.route('/users/<int:user_id>/delete_movie/<int:movie_id>', methods=['GET'])

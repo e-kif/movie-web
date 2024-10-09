@@ -10,15 +10,21 @@
 <body>
 
     <h1>Registered users of the MovieWeb App</h1>
+    
+    {% if message is defined and message|length %}
+    <p>{{message}}</p>
+    {% endif %}
+    
     <ul>
     {% for user in users %}
 
     <li><a href="/user/{{user.id}}">{{ user.name }}</a></li>
+    <a href="/users/{{user.id}}/delete-user"><button>Delete user</button></a>
 
     {% endfor %}
     </ul>
 
-    <button><a href="/add-user">Add new user</a></button>
+    <a href="/add-user"><button>Add new user</button></a>
 
 </body>
 </html>

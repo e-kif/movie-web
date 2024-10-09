@@ -24,6 +24,17 @@ class SQLiteDataManager(DataManagerInterface):
     def get_user(self, user_id):
         return self.db.session.query(Users).filter(Users.id == user_id).one()
 
+    def delete_user(self, user_id):
+        user = self.db.session.query(Users).filter(Users.id == user_id)
+        username = user.one().name
+        user.delete()
+        self.db.session.query(UserMovies).filter(UserMovies.user_id == user_id).delete()
+        delete_movies_ids = [id[0] for id in self.db.session.query(Movies.id).join(UserMovies, isouter=True) \
+                             .filter(UserMovies.user_id.is_(None)).all()]
+        self.db.session.query(Movies).filter(Movies.id.in_(delete_movies_ids)).delete()
+        self.db.session.commit()
+        return username
+
     def get_user_movies(self, user_id):
         return self.db.session.query(Movies).join(UserMovies).filter(UserMovies.user_id == user_id).all()
 
@@ -117,5 +128,5 @@ class UserMovies(db.Model):
     user_id: db.Mapped[int] = db.mapped_column(db.ForeignKey('users.id'), primary_key=True)
 
     def __repr__(self):
-        return (f'user={db.session.query(self.Users).filter(self.Users.id == self.user_id).one().name} '
-                f'movie={db.session.query(self.Movies).filter(self.Movies.id == self.movie_id).one().title}')
+        return (f'user_id={self.user_id} '
+                f'movie_id={self.movie_id}')
