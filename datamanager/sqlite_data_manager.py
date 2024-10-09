@@ -35,6 +35,14 @@ class SQLiteDataManager(DataManagerInterface):
         self.db.session.commit()
         return username
 
+    def update_user(self, user_id, username):
+        the_user = self.db.session.query(Users).filter(Users.id == user_id).one()
+        if not the_user:
+            return f'There is no user with id {user_id}.'
+        the_user.name = username
+        self.db.session.commit()
+        return f'User {the_user.name} was updated successfully.'
+
     def get_user_movies(self, user_id):
         return self.db.session.query(Movies).join(UserMovies).filter(UserMovies.user_id == user_id).all()
 

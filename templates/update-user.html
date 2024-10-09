@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Update user</title>
+	<link rel="stylesheet" href="static/style.css">
+</head>
+<body>
+	<h1>Update {{user.name}}</h1>
+	{% if message is defined and message|length %}
+	<p>{{message}}</p>
+	{% endif %}
+	<form action="/users/{{user.id}}/update-user" method="post">
+		<label for="username">Username:</label>
+		<input type="text" id="username" name="username" value="{{user.name}}" required>
+		<br><br>
+		<input type="submit" value="Update user">
+	</form>
+
+	<br><br>
+	<a href="/users"><button>Back to users</button></a>
+</body>
+</html>

@@ -28,7 +28,7 @@ def list_users():
 
 
 @app.route('/user/<int:user_id>', methods=['GET'])
-def user(user_id):
+def user_movies(user_id):
     try:
         username = data.get_user(user_id)
     except sqlalchemy.exc.NoResultFound:
@@ -82,11 +82,25 @@ def update_movie(user_id, movie_id):
         return redirect(f'/user/{user_id}?message={message}')
 
 
-@app.route('/users/<int:user_id>/delete-user')
+@app.route('/users/<int:user_id>/delete-user', methods=['GET'])
 def delete_user(user_id):
     username = data.delete_user(user_id)
     message = f'User {username} was deleted successfully.'
     return redirect(f'/users?message={message}')
+
+
+@app.route('/users/<int:user_id>/update-user', methods=['GET', 'POST'])
+def update_user(user_id):
+    if request.method == 'GET':
+        user = data.get_user(user_id)
+        message = request.args.get('message', '')
+        return render_template('update-user.html', user=user, message=message)
+    if request.method == 'POST':
+        username = request.form.get('username').strip()
+        if not username:
+            return redirect(f'/users/{user_id}/update-user?message=Username should not be empty.')
+        message = data.update_user(user_id, username)
+        return redirect(f'/users?message={message}')
 
 
 @app.route('/users/<int:user_id>/delete_movie/<int:movie_id>', methods=['GET'])
