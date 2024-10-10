@@ -17,6 +17,7 @@ data.db.init_app(app)
 
 @app.route('/', methods=['GET'])
 def home():
+    data.other_users_movies(3)
     return 'Welcome to the MovieWeb App!'
 
 
@@ -53,7 +54,11 @@ def add_movie(user_id):
     username = data.get_user(user_id)
     if request.method == 'GET':
         message = request.args.get('message', '')
-        return render_template('add-movie.html', user=username, message=message)
+        other_users_movies = data.other_users_movies(user_id)
+        return render_template('add-movie.html',
+                               user=username,
+                               message=message,
+                               movies=other_users_movies)
     if request.method == 'POST':
         title = request.form.get('title').strip()
         if not title:
@@ -107,6 +112,12 @@ def update_user(user_id):
 def delete_movie(user_id, movie_id):
     message = data.delete_movie(user_id, movie_id)
     return redirect(f'/user/{user_id}?message={message}')
+
+
+@app.route('/users/<int:user_id>/add-other-movie/<int:movie_id>', methods=['GET'])
+def add_other_user_movie(user_id, movie_id):
+    message = data.add_other_user_movie(user_id, movie_id)
+    return redirect(f'/users/{user_id}/add-movie?message={message}')
 
 
 @app.errorhandler(404)

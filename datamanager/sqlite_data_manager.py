@@ -121,6 +121,21 @@ class SQLiteDataManager(DataManagerInterface):
         self.db.session.commit()
         return f'The movie "{title}" was deleted successfully.'
 
+    def other_users_movies(self, user_id):
+        user_movies_ids = self.db.session.query(UserMovies.movie_id).filter(UserMovies.user_id == user_id).subquery()
+        return self.db.session.query(Movies).filter(Movies.id.not_in(user_movies_ids)).all()
+
+    def add_other_user_movie(self, user_id, movie_id):
+        title = self.db.session.query(Movies.title).filter(Movies.id == movie_id).one()[0]
+        add_move = UserMovies(
+            user_id=user_id,
+            movie_id=movie_id
+        )
+        self.db.session.add(add_move)
+        self.db.session.commit()
+        print(title)
+        return f'Movie "{title}" was added successfully.'
+
 
 db = SQLiteDataManager().db
 

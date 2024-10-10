@@ -21,6 +21,22 @@
 		<input type="submit" value="Add a movie">
 	</form>
 
+	{% if movies is defined and movies|length %}
+	<section class="user-movies grid">
+		{% for movie in movies %}
+
+			<div class="movie">
+				<h4>{{movie.title}}</h4>
+				<p>{{movie.year}}</p>
+				<div class="buttons">
+				<a href="/users/{{user.id}}/add-other-movie/{{movie.id}}"><button>Add movie</button></a>
+				</div>
+			</div>
+
+		{% endfor %}
+	</section>
+
+	{% endif %}
 
 </body>
 </html>
