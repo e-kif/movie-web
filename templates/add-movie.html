@@ -26,11 +26,11 @@
 	<section class="user-movies grid">
 		{% for movie in movies %}
 
-			<div class="movie">
+			<div class="movie grid">
 				<a href="{{movie.url}}" target="_blank"><img src="{{movie.poster}}" title="{{movie.plot}}" alt=""></a>
 				<h4>{{movie.title}}</h4>
 				<p>{{movie.year}}</p>
-				<div class="buttons">
+				<div class="buttons grid">
 				<a href="/users/{{user.id}}/add-other-movie/{{movie.id}}"><button>Add movie</button></a>
 				</div>
 			</div>

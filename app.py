@@ -17,7 +17,6 @@ data.db.init_app(app)
 
 @app.route('/', methods=['GET'])
 def home():
-    # data.db.session.execute(sqlalchemy.text('ALTER TABLE movies ADD COLUMN poster STRING'))
     return 'Welcome to the MovieWeb App!'
 
 
