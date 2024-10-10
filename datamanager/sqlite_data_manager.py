@@ -126,15 +126,19 @@ class SQLiteDataManager(DataManagerInterface):
         return self.db.session.query(Movies).filter(Movies.id.not_in(user_movies_ids)).all()
 
     def add_other_user_movie(self, user_id, movie_id):
-        title = self.db.session.query(Movies.title).filter(Movies.id == movie_id).one()[0]
-        add_move = UserMovies(
-            user_id=user_id,
-            movie_id=movie_id
-        )
-        self.db.session.add(add_move)
-        self.db.session.commit()
-        print(title)
-        return f'Movie "{title}" was added successfully.'
+        if self.db.session.query(Users).get(user_id):
+            if self.db.session.query(Movies).get(movie_id):
+                title = self.db.session.query(Movies.title).filter(Movies.id == movie_id).one()[0]
+                add_move = UserMovies(
+                    user_id=user_id,
+                    movie_id=movie_id
+                )
+                self.db.session.add(add_move)
+                self.db.session.commit()
+                return True, f'Movie "{title}" was added successfully.'
+            return False, f'Movie with id {movie_id} does not exist.'
+        return False, f'User with id {user_id} does not exist.'
+
 
 
 db = SQLiteDataManager().db

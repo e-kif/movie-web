@@ -116,8 +116,10 @@ def delete_movie(user_id, movie_id):
 
 @app.route('/users/<int:user_id>/add-other-movie/<int:movie_id>', methods=['GET'])
 def add_other_user_movie(user_id, movie_id):
-    message = data.add_other_user_movie(user_id, movie_id)
-    return redirect(f'/users/{user_id}/add-movie?message={message}')
+    success, message = data.add_other_user_movie(user_id, movie_id)
+    if success:
+        return redirect(f'/users/{user_id}/add-movie?message={message}')
+    return redirect(f'/users?message={message}')
 
 
 @app.errorhandler(404)
