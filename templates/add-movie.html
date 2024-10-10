@@ -22,10 +22,12 @@
 	</form>
 
 	{% if movies is defined and movies|length %}
+	<h3>Or select one from other user's movies:</h3>
 	<section class="user-movies grid">
 		{% for movie in movies %}
 
 			<div class="movie">
+				<a href="{{movie.url}}" target="_blank"><img src="{{movie.poster}}" title="{{movie.plot}}" alt=""></a>
 				<h4>{{movie.title}}</h4>
 				<p>{{movie.year}}</p>
 				<div class="buttons">
