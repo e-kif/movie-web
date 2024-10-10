@@ -66,7 +66,8 @@ class SQLiteDataManager(DataManagerInterface):
             year = movie_info['Year']
         try:
             movie_exist = self.db.session.query(Movies) \
-                .filter(Movies.title == movie_info['Title'] and Movies.year == movie_info['Year']).one()
+                .filter(Movies.title == movie_info['Title']) \
+                .filter(Movies.year == movie_info['Year']).one()
         except sqlalchemy.exc.NoResultFound:
             movie = Movies(
                 title=movie_info['Title'],

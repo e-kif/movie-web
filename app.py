@@ -11,8 +11,8 @@ data = SQLiteDataManager()
 data.db.init_app(app)
 
 
-with app.app_context():
-    data.db.create_all()
+# with app.app_context():
+#     data.db.create_all()
 
 
 @app.route('/', methods=['GET'])
