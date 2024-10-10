@@ -24,6 +24,7 @@
 	<section class="user-movies grid">
 		{% for movie in movies %}
 			<div class="movie grid">
+				<img src="{{movie.poster}}" alt="">
 				<h4>{{movie.title}}</h4>
 				<p>{{movie.year}}</p>
 				<div class="buttons">
