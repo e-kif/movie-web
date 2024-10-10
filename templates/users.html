@@ -7,26 +7,36 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Users - MovieWeb App</title>
     <link rel="stylesheet" href="/static/style.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Rowdies:wght@300;400;700&display=swap');
+    </style>
 </head>
 <body>
 
     <h1>Registered users of the MovieWeb App</h1>
     
+    <nav><a href="/add-user"><button>Add new user</button></a></nav>
+
     {% if message is defined and message|length %}
     <p>{{message}}</p>
     {% endif %}
     
-    <ul>
+    <section class="users">
     {% for user in users %}
-
-    <li><a href="/user/{{user.id}}">{{ user.name }}</a></li>
-    <a href="/users/{{user.id}}/delete-user"><button>Delete user</button></a>
-    <a href="/users/{{user.id}}/update-user"><button>Update user</button></a>
-
+    <div class="user">
+    <a href="/user/{{user.id}}"><img src="https://api.multiavatar.com/{{user.name}}{{user.id}}.svg" alt="">
+    <h3 class="username">{{ user.name }}</h3></a>
+    <div class="buttons"><a href="/users/{{user.id}}/delete-user"><button>Delete user</button></a>
+    <a href="/users/{{user.id}}/update-user"><button>Update user</button></a></div>
+    </div>
     {% endfor %}
+        
+
+
+    </section>
     </ul>
 
-    <a href="/add-user"><button>Add new user</button></a>
+    
 
 </body>
 </html>
