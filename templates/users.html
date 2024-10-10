@@ -15,7 +15,10 @@
 
     <h1>Registered users of the MovieWeb App</h1>
     
-    <nav><a href="/add-user"><button>Add new user</button></a></nav>
+    <nav>
+        <a href="/"><button>Home</button></a>
+        <a href="/add-user"><button>Add new user</button></a>
+    </nav>
 
     {% if message is defined and message|length %}
     <p>{{message}}</p>

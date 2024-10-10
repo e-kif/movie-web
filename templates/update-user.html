@@ -8,6 +8,10 @@
 </head>
 <body>
 	<h1>Update {{user.name}}</h1>
+	<nav>
+		<a href="/"><button>Home</button></a>
+		<a href="/users"><button>Change user</button></a>
+	</nav>
 	{% if message is defined and message|length %}
 	<p>{{message}}</p>
 	{% endif %}
@@ -19,6 +23,5 @@
 	</form>
 
 	<br><br>
-	<a href="/users"><button>Back to users</button></a>
 </body>
 </html>

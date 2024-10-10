@@ -8,6 +8,11 @@
 </head>
 <body>
 	<h1>Update info for movie "{{movie.title}}"</h1>
+	<nav>
+		<a href="/"><button>Home</button></a>
+		<a href="/users"><button>Change user</button></a>
+		<a href="/user/{{user_id}}"><button>Back to movies</button></a>
+	</nav>
 	
 	<form action="/users/{{user_id}}/update_movie/{{movie.id}}" method="post">
 		<label for="title">Title:</label>
@@ -27,7 +32,6 @@
 	</form>
 
 	<br><br>
-		<a href="/user/{{user_id}}"><button>Back to movies</button></a>
 
 </body>
 </html>
