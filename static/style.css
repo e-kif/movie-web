@@ -17,6 +17,26 @@ nav {
 	gap: 16px;
 }
 
+nav button, input[type='submit'], .buttons button {
+	background-color: #cdf;
+	transition: all 0.4s ease;
+}
+
+nav button:hover,
+input[type='submit']:hover,
+.buttons button:hover  {
+	background-color: #cff;
+	box-shadow: 0 5px 5px rgba(0,0,0,0.2);
+}
+
+input[type='text'], input[type='number'] {
+	border: none;
+	background-color: unset;
+	padding: 8px;
+	backdrop-filter: blur(2px) brightness(1.1);
+}
+
+
 .grid {
 	display: grid;
 	justify-content: center;
@@ -35,7 +55,6 @@ nav {
 	margin-bottom: 24px;
 	padding: 16px 8px;
 	border-radius: 8px;
-/*	background-color: white;*/
 	backdrop-filter: blur(2px) brightness(1.05);
 	width: 100%;
 	grid-template-columns: 1fr;
@@ -64,7 +83,7 @@ nav {
 	transition: all .38s ease;
 }
 
-button {
+button, input[type='submit'] {
 	cursor: pointer;
 	border: none;
 	padding: 8px 12px;
