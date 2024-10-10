@@ -57,6 +57,7 @@ class SQLiteDataManager(DataManagerInterface):
     def add_movie(self, user_id, title, year=''):
         try:
             movie_info = requests.get(f'{self.omdb_url}&t={title}&y={year}').json()
+            print(movie_info)
         except requests.exceptions.ConnectionError:
             return False, f'Error: movie "{title}" was not added. Check your internet connection and try again.'
         if movie_info['Response'] == 'False':
@@ -71,7 +72,12 @@ class SQLiteDataManager(DataManagerInterface):
                 title=movie_info['Title'],
                 director=movie_info['Director'],
                 year=year,
-                rating=None if movie_info['imdbRating'] == 'N/A' else movie_info['imdbRating']
+                rating=None if movie_info['imdbRating'] == 'N/A' else movie_info['imdbRating'],
+                poster=movie_info['Poster'],
+                plot=movie_info['Plot'],
+                genre=movie_info['Genre'],
+                url=f'https://imdb.com/title/{movie_info["imdbID"]}',
+                country=movie_info['Country']
             )
             self.db.session.add(movie)
             self.db.session.flush()
@@ -140,7 +146,6 @@ class SQLiteDataManager(DataManagerInterface):
         return False, f'User with id {user_id} does not exist.'
 
 
-
 db = SQLiteDataManager().db
 
 
@@ -158,6 +163,11 @@ class Movies(db.Model):
     director: db.Mapped[str] = db.mapped_column()
     year: db.Mapped[int] = db.mapped_column()
     rating: db.Mapped[float] = db.mapped_column(nullable=True)
+    poster: db.Mapped[str] = db.mapped_column(nullable=True)
+    plot: db.Mapped[str] = db.mapped_column(nullable=True)
+    url: db.Mapped[str] = db.mapped_column()
+    genre: db.Mapped[str] = db.mapped_column()
+    country: db.Mapped[str] = db.mapped_column()
 
     def __repr__(self):
         return f'Movies(id={self.id}, title={self.title}, year={self.year})'

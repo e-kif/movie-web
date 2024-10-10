@@ -11,13 +11,13 @@ data = SQLiteDataManager()
 data.db.init_app(app)
 
 
-# with app.app_context():
-#     data.db.create_all()
+with app.app_context():
+    data.db.create_all()
 
 
 @app.route('/', methods=['GET'])
 def home():
-    data.other_users_movies(3)
+    # data.db.session.execute(sqlalchemy.text('ALTER TABLE movies ADD COLUMN poster STRING'))
     return 'Welcome to the MovieWeb App!'
 
 
