@@ -17,6 +17,7 @@ data.db.init_app(app)
 
 @app.route('/', methods=['GET'])
 def home():
+    """Defines home route, renders home.html template"""
     last_users = data.get_last_users(2)
     last_movies = data.get_last_movies(8)
     return render_template('home.html', users=last_users, movies=last_movies)
@@ -24,6 +25,7 @@ def home():
 
 @app.route('/users', methods=['GET'])
 def list_users():
+    """Renders template with a list of users, registered in the app"""
     users = data.get_all_users()
     message = request.args.get('message', '')
     return render_template('users.html', users=users, message=message)
@@ -31,6 +33,7 @@ def list_users():
 
 @app.route('/user/<int:user_id>', methods=['GET'])
 def user_movies(user_id):
+    """Renders template, that shows all movies added by user with user_id"""
     try:
         username = data.get_user(user_id)
     except sqlalchemy.exc.NoResultFound:
@@ -42,6 +45,7 @@ def user_movies(user_id):
 
 @app.route('/add-user', methods=['GET', 'POST'])
 def add_user():
+    """For GET request renders a form for adding a new user. For POST request adds new user to a database"""
     if request.method == 'GET':
         return render_template('add_user.html')
     if request.method == 'POST':
@@ -52,6 +56,9 @@ def add_user():
 
 @app.route('/users/<int:user_id>/add-movie', methods=['GET', 'POST'])
 def add_movie(user_id):
+    """GET request: shows form for adding a new movie and suggests movies that are already in other users' database.
+    POST request: after some validation either adds new movie or displays error message.
+    """
     username = data.get_user(user_id)
     if request.method == 'GET':
         message = request.args.get('message', '')
@@ -73,6 +80,7 @@ def add_movie(user_id):
 
 @app.route('/users/<int:user_id>/update_movie/<int:movie_id>', methods=['GET', 'POST'])
 def update_movie(user_id, movie_id):
+    """Updates movie info"""
     if request.method == 'GET':
         try:
             movie = data.get_movie(movie_id)
@@ -90,15 +98,23 @@ def update_movie(user_id, movie_id):
 
 @app.route('/users/<int:user_id>/delete-user', methods=['GET'])
 def delete_user(user_id):
-    username = data.delete_user(user_id)
+    """Deletes user from a database"""
+    try:
+        username = data.delete_user(user_id)
+    except sqlalchemy.exc.NoResultFound:
+        return redirect(f'/users?message=There is no user with id {user_id}')
     message = f'User {username} was deleted successfully.'
     return redirect(f'/users?message={message}')
 
 
 @app.route('/users/<int:user_id>/update-user', methods=['GET', 'POST'])
 def update_user(user_id):
+    """GET request: shows the form. POST request: updates username"""
     if request.method == 'GET':
-        user = data.get_user(user_id)
+        try:
+            user = data.get_user(user_id)
+        except sqlalchemy.exc.NoResultFound:
+            return redirect(f'/users?message=There is no user with id {user_id}')
         message = request.args.get('message', '')
         return render_template('update-user.html', user=user, message=message)
     if request.method == 'POST':
@@ -111,12 +127,14 @@ def update_user(user_id):
 
 @app.route('/users/<int:user_id>/delete_movie/<int:movie_id>', methods=['GET'])
 def delete_movie(user_id, movie_id):
+    """Deletes movie from database if provided ids are valid, redirects to 404 if not"""
     message = data.delete_movie(user_id, movie_id)
     return redirect(f'/user/{user_id}?message={message}')
 
 
 @app.route('/users/<int:user_id>/add-other-movie/<int:movie_id>', methods=['GET'])
 def add_other_user_movie(user_id, movie_id):
+    """Adds movie to a user from other users' movies"""
     success, message = data.add_other_user_movie(user_id, movie_id)
     if success:
         return redirect(f'/users/{user_id}/add-movie?message={message}')
@@ -125,6 +143,7 @@ def add_other_user_movie(user_id, movie_id):
 
 @app.errorhandler(404)
 def page_not_found(e):
+    """Error handler for 404 error"""
     return render_template('404.html'), 404
 
 

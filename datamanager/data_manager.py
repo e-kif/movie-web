@@ -2,6 +2,7 @@ from abc import ABC, abstractmethod
 
 
 class DataManagerInterface(ABC):
+    """Defines abstract class for Data Manager Interface"""
 
     @abstractmethod
     def get_all_users(self):
@@ -13,6 +14,14 @@ class DataManagerInterface(ABC):
 
     @abstractmethod
     def add_user(self, user):
+        pass
+
+    @abstractmethod
+    def delete_user(self, user_id):
+        pass
+
+    @abstractmethod
+    def update_user(self, user_id):
         pass
 
     @abstractmethod
