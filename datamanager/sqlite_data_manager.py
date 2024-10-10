@@ -145,6 +145,11 @@ class SQLiteDataManager(DataManagerInterface):
             return False, f'Movie with id {movie_id} does not exist.'
         return False, f'User with id {user_id} does not exist.'
 
+    def get_last_users(self, number):
+        return self.db.session.query(Users).order_by(Users.id.desc()).limit(number).all()
+
+    def get_last_movies(self, number):
+        return self.db.session.query(Movies).order_by(Movies.id.desc()).limit(number).all()
 
 db = SQLiteDataManager().db
 

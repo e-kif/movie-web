@@ -17,7 +17,9 @@ data.db.init_app(app)
 
 @app.route('/', methods=['GET'])
 def home():
-    return 'Welcome to the MovieWeb App!'
+    last_users = data.get_last_users(2)
+    last_movies = data.get_last_movies(8)
+    return render_template('home.html', users=last_users, movies=last_movies)
 
 
 @app.route('/users', methods=['GET'])

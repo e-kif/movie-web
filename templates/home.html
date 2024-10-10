@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Movie Web App</title>
+	<link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+	<h1>Welcome to Movie Web App</h1>
+	<nav><a href="/users"><button>Select user</button></a></nav>
+	
+	{% if users is defined and users|length %}
+
+	<h2>Our new users:</h2>
+
+	<section class="users">
+    {% for user in users %}
+    <div class="user">
+    <a href="/user/{{user.id}}"><img src="https://api.multiavatar.com/{{user.name}}{{user.id}}.svg" alt="">
+    <h3 class="username">{{ user.name }}</h3></a>
+    <div class="buttons"><a href="/users/{{user.id}}/delete-user"><button>Delete user</button></a>
+    <a href="/users/{{user.id}}/update-user"><button>Update user</button></a></div>
+    </div>
+    {% endfor %}
+    </section>
+
+	{% endif %}
+
+	{% if movies is defined and movies|length %}
+
+	<h2>Latest added movies:</h2>
+
+	<section class="user-movies grid">
+		{% for movie in movies %}
+
+			<div class="movie grid">
+				<a href="{{movie.url}}" target="_blank"><img src="{{movie.poster}}" title="{{movie.plot}}" alt=""></a>
+				<h4>{{movie.title}}</h4>
+				<p>{{movie.year}}</p>
+				
+			</div>
+
+		{% endfor %}
+	</section>
+
+	{% endif %}
+
+
+
+</body>
+</html>
